@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// Get all products or filter by category
 router.get('/', async (req, res) => {
     try {
         const { category, minPrice, maxPrice } = req.query;
@@ -21,6 +22,8 @@ router.get('/', async (req, res) => {
         if (category) {
             query.category = category;
         }
+        if (minPrice) {
+            query.price = { ...query.price, $gte: Number(minPrice) };
         }
         if (maxPrice) {
             query.price = { ...query.price, $lte: Number(maxPrice) };
