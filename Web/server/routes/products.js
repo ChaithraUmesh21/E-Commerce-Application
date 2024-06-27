@@ -30,3 +30,23 @@ router.get('/', async (req, res) => {
         res.json(products);
     } 
 );
+
+router.post('/', upload.single('image'), async (req, res) => {
+    const { name, category, price, stock, description } = req.body;
+    const image = req.file ? `/uploads/${req.file.filename}` : null;
+    try {
+        let product = new Product({
+            name,
+            category,
+            price,
+            stock,
+            description,
+            image
+        });
+
+        await product.save();
+        res.json(product);
+    } catch (err) {
+        res.status(500).send('Server error');
+    }
+});
