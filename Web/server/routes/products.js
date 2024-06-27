@@ -31,9 +31,12 @@ router.get('/', async (req, res) => {
 
         const products = await Product.find(query);
         res.json(products);
-    } 
-);
+    } catch (err) {
+        res.status(500).send('Server error');
+    }
+});
 
+// get product by ID
 router.post('/', upload.single('image'), async (req, res) => {
     const { name, category, price, stock, description } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
