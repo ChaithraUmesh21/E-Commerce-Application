@@ -50,3 +50,22 @@ router.post('/', upload.single('image'), async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+router.put('/:id', upload.single('image'), async (req, res) => {
+    const { name, category, price, stock, description } = req.body;
+    const image = req.file ? `/uploads/${req.file.filename}` : null;
+    try {
+        let product = await Product.findById(req.params.id);
+        if (!product) return res.status(404).json({ msg: 'Product not found' });
+
+        product.name = name;
+        product.category = category;
+        product.price = price;
+        product.stock = stock;
+        product.description = description;
+        if (image) product.image = image;
+
+        await product.save();
+        res.json(product);
+    } catch (err)
+});
