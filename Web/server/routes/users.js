@@ -13,3 +13,27 @@ router.get('/', auth, async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+// Update user (admin only)
+router.put('/:id', auth, async (req, res) => {
+    const { name, email, role } = req.body;
+
+    try {
+        let user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        user.name = name;
+        user.email = email;
+        user.role = role;
+
+        await user.save();
+
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
