@@ -37,3 +37,20 @@ router.put('/:id', auth, async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+router.delete('/:id', auth, async (req, res) => {
+    try {
+        let user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        res.json({ msg: 'User removed' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+
+module.exports = router;
