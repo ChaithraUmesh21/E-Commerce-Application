@@ -23,3 +23,55 @@ const AuthState = props => {
         user: null,
         error: null
     };
+
+    const [state, dispatch] = useReducer(AuthReducer, initialState);
+
+    useEffect(() => {
+        if (localStorage.token) {
+            setAuthToken(localStorage.token);
+        }
+
+        loadUser();
+    }, []);
+
+    // Load User
+    const loadUser = async () => {
+        if (localStorage.token) {
+            setAuthToken(localStorage.token);
+        }
+
+        try {
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/user`);
+            dispatch({
+                type: USER_LOADED,
+                payload: res.data
+            });
+        } catch (err) {
+            dispatch({ type: AUTH_ERROR });
+        }
+    };
+
+    // Register User
+    const register = async formData => {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        try {
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/register`, formData, config);
+
+            dispatch({
+                type: REGISTER_SUCCESS,
+                payload: res.data
+            });
+
+            loadUser();
+        } catch (err) {
+            dispatch({
+                type: REGISTER_FAIL,
+                payload: err.response.data.msg || 'Registration failed'
+            });
+        }
+    };
