@@ -76,7 +76,7 @@ const AuthState = props => {
         }
     };
 
-    
+
     // Login User
     const login = async formData => {
         const config = {
@@ -101,3 +101,35 @@ const AuthState = props => {
             });
         }
     };
+
+     // Logout
+     const logout = () => {
+        dispatch({ type: LOGOUT });
+    };
+
+    // Clear Errors
+    const clearErrors = () => {
+        dispatch({ type: CLEAR_ERRORS });
+    };
+
+    return (
+        <AuthContext.Provider
+            value={{
+                token: state.token,
+                isAuthenticated: state.isAuthenticated,
+                loading: state.loading,
+                user: state.user,
+                error: state.error,
+                register,
+                loadUser,
+                login,
+                logout,
+                clearErrors
+            }}
+        >
+            {props.children}
+        </AuthContext.Provider>
+    );
+};
+
+export default AuthState;
