@@ -30,7 +30,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use("/api", require(",/frontend.build"));
 app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "src", "index.js"))
+    res.sendFile(path.resolve(__dirname, "client", "public", "index.html"))
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
