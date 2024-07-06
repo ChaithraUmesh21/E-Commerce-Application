@@ -1,3 +1,4 @@
+const express = require('express');
 const multer = require('multer');
 const Product = require('../models/Product');
 const router = express.Router();
@@ -10,7 +11,6 @@ const storage = multer.diskStorage({
         cb(null, `${Date.now()}-${file.originalname}`);
     }
 });
-
 const upload = multer({ storage });
 
 // Get all products or filter by category
@@ -36,7 +36,19 @@ router.get('/', async (req, res) => {
     }
 });
 
-// get product by ID
+// Get product by ID
+router.get('/:id', async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (!product) return res.status(404).json({ msg: 'Product not found' });
+
+        res.json(product);
+    } catch (err) {
+        res.status(500).send('Server error');
+    }
+});
+
+// Add a new product
 router.post('/', upload.single('image'), async (req, res) => {
     const { name, category, price, stock, description } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
@@ -57,6 +69,7 @@ router.post('/', upload.single('image'), async (req, res) => {
     }
 });
 
+// Update a product
 router.put('/:id', upload.single('image'), async (req, res) => {
     const { name, category, price, stock, description } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
@@ -73,9 +86,12 @@ router.put('/:id', upload.single('image'), async (req, res) => {
 
         await product.save();
         res.json(product);
-    } catch (err)
+    } catch (err) {
+        res.status(500).send('Server error');
+    }
 });
 
+// Delete a product
 router.delete('/:id', async (req, res) => {
     try {
         let product = await Product.findById(req.params.id);
