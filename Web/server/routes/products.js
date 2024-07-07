@@ -11,6 +11,7 @@ const storage = multer.diskStorage({
         cb(null, `${Date.now()}-${file.originalname}`);
     }
 });
+
 const upload = multer({ storage });
 
 // Get all products or filter by category

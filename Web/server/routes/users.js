@@ -38,6 +38,7 @@ router.put('/:id', auth, async (req, res) => {
     }
 });
 
+// Delete user (admin only)
 router.delete('/:id', auth, async (req, res) => {
     try {
         let user = await User.findById(req.params.id);
@@ -45,6 +46,8 @@ router.delete('/:id', auth, async (req, res) => {
         if (!user) {
             return res.status(404).json({ msg: 'User not found' });
         }
+
+        await User.findByIdAndDelete(req.params.id);
 
         res.json({ msg: 'User removed' });
     } catch (err) {
