@@ -15,7 +15,7 @@ router.post('/', authMiddleware, async (req, res) => {
         for (const item of cart) {
             const product = await Product.findById(item.product._id);
             if (product.stock < item.quantity) {
-                return res.status(400).json({ msg: 'Error message here' });
+                return res.status(400).json({ msg: `Not enough stock for ${product.name}` });
             }
             product.stock -= item.quantity;
             await product.save();
@@ -27,20 +27,20 @@ router.post('/', authMiddleware, async (req, res) => {
             products: cart.map(item => ({
                 product: item.product._id,
                 quantity: item.quantity
-        })),
-        total: cart.reduce((total, item) => total + item.product.price * item.quantity, 0)
-    });
+            })),
+            total: cart.reduce((total, item) => total + item.product.price * item.quantity, 0)
+        });
 
-    await order.save();
+        await order.save();
 
-    // Clear the user's cart
-    user.cart = [];
-    await user.save();
+        // Clear the user's cart
+        user.cart = [];
+        await user.save();
 
-    res.json(order);
-} catch (err) {
-    res.status(500).send('Server error');
-}
+        res.json(order);
+    } catch (err) {
+        res.status(500).send('Server error');
+    }
 });
 
 // Get all orders for the logged-in user
